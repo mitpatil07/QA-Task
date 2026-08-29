@@ -54,9 +54,23 @@ public class Config {
      */
     public static String get(String key) {
         String value = props.getProperty(key);
-        if (value == null) {
+        
+        // Specific override for password to avoid plaintext commits
+        if ("valid.password".equals(key)) {
+            String envPass = System.getenv("FFC_PASSWORD");
+            if (envPass != null && !envPass.trim().isEmpty()) {
+                return envPass.trim();
+            }
+            String sysPass = System.getProperty("FFC_PASSWORD");
+            if (sysPass != null && !sysPass.trim().isEmpty()) {
+                return sysPass.trim();
+            }
+        }
+
+        if (value == null || "YOUR_PASSWORD_HERE".equals(value)) {
             throw new RuntimeException(
-                "[Config] Missing required property: '" + key + "' in " + CONFIG_FILE
+                "[Config] Missing required property: '" + key + "'. " +
+                "Please set it in " + CONFIG_FILE + " or provide FFC_PASSWORD environment variable."
             );
         }
         return value.trim();

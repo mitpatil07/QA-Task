@@ -57,6 +57,22 @@ public class CSVDataReader {
 
                 // Trim each cell to remove accidental spaces around values
                 String[] trimmedRow = trimAll(row);
+                
+                // Inject password from environment variable if placeholder is found
+                for (int j = 0; j < trimmedRow.length; j++) {
+                    if ("YOUR_PASSWORD_HERE".equals(trimmedRow[j])) {
+                        String envPass = System.getenv("FFC_PASSWORD");
+                        if (envPass != null && !envPass.trim().isEmpty()) {
+                            trimmedRow[j] = envPass.trim();
+                        } else {
+                            String sysPass = System.getProperty("FFC_PASSWORD");
+                            if (sysPass != null && !sysPass.trim().isEmpty()) {
+                                trimmedRow[j] = sysPass.trim();
+                            }
+                        }
+                    }
+                }
+                
                 data.add(trimmedRow);
             }
 

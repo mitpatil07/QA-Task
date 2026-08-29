@@ -130,10 +130,4 @@ Before evaluating this project, update these files:
 | Postman collection request URLs | Actual API endpoints from DevTools |
 | `automation/src/test/java/pages/AttendancePage.java` | `EXPECTED_PUNCH_IN_TOAST` constant |
 
----
 
-## Credentials
-- **Email:** `mitesh8767@gmail.com`
-- **Password:** _(will be shared separately)_
-- **Dashboard URL:** `https://test.fieldforceconnect.com/dashboard`
-- **Attendance URL:** `https://test.fieldforceconnect.com/attendance`

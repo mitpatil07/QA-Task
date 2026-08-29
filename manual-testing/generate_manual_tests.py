@@ -383,12 +383,12 @@ BUG_REPORT_COLUMNS = [
 BUG_WIDTHS = [10, 15, 35, 60, 40, 40, 12, 12, 25]
 
 BUG_ROWS = [
-    ("BUG_001", "Forgot Password",
-     "'Failed to send OTP' toast on Forgot Password with valid email",
-     "1. Go to /auth/login\n2. Click 'Forgot Password?'\n3. Enter mitesh8767@gmail.com\n4. Click Submit",
-     "OTP sent successfully, confirmation message displayed",
-     "Toast: 'Failed to send OTP' appears immediately — OTP not delivered",
-     "Medium", "Open", "See browser screenshot (DevTools console screenshot)"),
+    ("UX_001", "Forgot Password",
+     "UX Note: Unclear error message when submitting unregistered email",
+     "1. Go to /auth/login\n2. Click 'Forgot Password?'\n3. Enter an unregistered email (e.g., unknown@test.com)\n4. Click Submit",
+     "Should show a clear, user-friendly message (e.g., 'Email not found')",
+     "Displays a generic or vague error message instead of a specific user-friendly prompt",
+     "Low (UX)", "Open", "N/A"),
 ]
 
 

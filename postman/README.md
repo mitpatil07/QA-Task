@@ -22,7 +22,7 @@ This folder contains the Postman collection and environment for API testing of
 |---|---|---|
 | `base_url` | `https://test.fieldforceconnect.com` | Pre-configured |
 | `valid_email` | `mitesh8767@gmail.com` | Pre-configured — update if needed |
-| `valid_password` | `YOUR_PASSWORD_HERE` | **You must update this** |
+| `valid_password` | `YOUR_PASSWORD_HERE` | **Set this to real password before running** |
 | `token` | _(empty initially)_ | Set automatically by the valid login test script |
 
 ---

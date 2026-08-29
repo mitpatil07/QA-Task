@@ -52,12 +52,16 @@ automation/
 
 > **No ChromeDriver download needed.** WebDriverManager handles it automatically.
 
-### Step 2 — Update Config
-Open `src/test/resources/config.properties` and set:
-```properties
-valid.password=YOUR_ACTUAL_PASSWORD_HERE
+### Step 2 — Set Environment Variable (Password)
+Set your actual password as an environment variable before running the tests:
+```bash
+# Windows (PowerShell)
+$env:FFC_PASSWORD="YOUR_ACTUAL_PASSWORD_HERE"
+
+# Linux / Mac
+export FFC_PASSWORD="YOUR_ACTUAL_PASSWORD_HERE"
 ```
-Also update `src/test/resources/testdata/login-data.csv` — replace `YOUR_PASSWORD_HERE` in the valid rows.
+The framework is configured to inject this password into the configuration and CSV test data at runtime, so you don't commit it in plaintext.
 
 ### Step 3 — Run All Tests
 ```bash
