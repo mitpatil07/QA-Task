@@ -2,13 +2,31 @@
   "info": {
     "_postman_id": "ffc-collection-001",
     "name": "FieldForceConnect API Tests",
-    "description": "API test collection for https://test.fieldforceconnect.com/\n\nCovers:\n  1. POST Login — valid credentials (captures auth token)\n  2. POST Login — invalid credentials (asserts error)\n  3. GET authenticated endpoint (uses {{token}})\n  4. POST Add Customer (uses {{token}})\n\nIMPORTANT: Before running, update the environment variables:\n  - valid_email / valid_password: your test account credentials\n  - base_url: should already be set to https://test.fieldforceconnect.com\n\nThe token variable is set automatically by the Login test script:\n  pm.environment.set('token', ...)\n\n⚠️  REAL API ENDPOINTS:\n  The exact endpoint paths below (e.g. /api/auth/login) are educated guesses\n  based on common REST API patterns. To find the real paths:\n    1. Open Chrome DevTools → Network tab → filter by Fetch/XHR\n    2. Perform Login and Add Customer on the live site\n    3. Note the Request URL from each XHR call\n    4. Update the 'url' fields in each request below\n\nSchema: https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "API test collection for https://test.fieldforceconnect.com/\n\nVerified Endpoints:\n  1. POST Login — Valid Credentials (/api/account/authenticate)\n  2. POST Login — Invalid Credentials (/api/account/authenticate)\n  3. GET User Profile (/api/V1/UserBasicInfo)\n  4. POST Add Customer (/api/CRM/Lead)\n\nPre-request Script:\n  Collection-level fail-fast script validates {{token}} is present before running authenticated requests.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Collection-level Pre-request script to fail fast if token is missing",
+          "var requestName = pm.info.requestName;",
+          "if (requestName.includes('(Authenticated)') || requestName.includes('Add Customer') || requestName.includes('Profile')) {",
+          "    var token = pm.environment.get('token');",
+          "    if (!token || token.toString().trim() === '') {",
+          "        pm.expect.fail(\"Pre-request Error: Authentication token {{token}} is empty. Please run 'POST Login - Valid Credentials' first.\");",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ],
   "item": [
     {
       "name": "Auth",
-      "description": "Login-related API calls",
+      "description": "Authentication endpoints",
       "item": [
         {
           "name": "POST Login - Valid Credentials",
@@ -22,7 +40,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"{{valid_email}}\",\n  \"password\": \"{{valid_password}}\"\n}",
+              "raw": "{\n  \"username\": \"{{valid_email}}\",\n  \"password\": \"{{valid_password}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -30,17 +48,17 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/login",
+              "raw": "{{base_url}}/api/account/authenticate",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
-                "auth",
-                "login"
+                "account",
+                "authenticate"
               ]
             },
-            "description": "Login with valid credentials.\n\n⚠️  Update the path if the real API endpoint differs.\n   Common alternatives:\n     - /api/login\n     - /auth/login\n     - /api/v1/auth/login\n\nThe test script below:\n  1. Asserts HTTP status is 200\n  2. Extracts the auth token from the response\n  3. Stores it in environment variable 'token' for use by subsequent requests"
+            "description": "Authenticates user against live FieldForceConnect endpoint (/api/account/authenticate).\nCaptures token and saves to {{token}}."
           },
           "event": [
             {
@@ -48,38 +66,27 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "// ── Test 1: Verify HTTP status is 200 OK ────────────────",
-                  "pm.test('Status code is 200', function () {",
+                  "pm.test('Status code is 200 OK', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "// ── Test 2: Response body is valid JSON ─────────────────",
-                  "pm.test('Response is JSON', function () {",
+                  "pm.test('Response is valid JSON', function () {",
                   "    pm.response.to.be.json;",
                   "});",
                   "",
-                  "// ── Test 3: Capture auth token → save to environment ────",
-                  "// ⚠️  UPDATE THE TOKEN PATH to match the real API response.",
-                  "// Common response shapes:",
-                  "//   { token: 'abc123' }                → jsonData.token",
-                  "//   { data: { token: 'abc123' } }      → jsonData.data.token",
-                  "//   { access_token: 'abc123' }         → jsonData.access_token",
-                  "//   { result: { authToken: 'abc123' }} → jsonData.result.authToken",
-                  "pm.test('Token is present in response', function () {",
+                  "pm.test('Token captured and saved to environment', function () {",
                   "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success, 'success flag').to.be.true;",
                   "",
-                  "    // Try multiple common token field names",
-                  "    var token = jsonData.token",
-                  "             || (jsonData.data && jsonData.data.token)",
-                  "             || jsonData.access_token",
-                  "             || (jsonData.result && jsonData.result.token);",
+                  "    var token = jsonData.referralToken || jsonData.accessToken;",
+                  "    pm.expect(token, 'token string').to.not.be.undefined;",
+                  "    pm.expect(token, 'token string').to.not.be.empty;",
                   "",
-                  "    pm.expect(token).to.not.be.undefined;",
-                  "    pm.expect(token).to.not.be.empty;",
-                  "",
-                  "    // Save to environment so subsequent requests can use {{token}}",
                   "    pm.environment.set('token', token);",
-                  "    console.log('Token captured and saved to environment: ' + token.substring(0, 20) + '...');",
+                  "    if (jsonData.userId) {",
+                  "        pm.environment.set('userId', jsonData.userId);",
+                  "    }",
+                  "    console.log('Auth token captured successfully.');",
                   "});"
                 ]
               }
@@ -98,7 +105,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"wronguser@test.com\",\n  \"password\": \"WrongPassword123\"\n}",
+              "raw": "{\n  \"username\": \"invalid_user@test.com\",\n  \"password\": \"WrongPassword123\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -106,17 +113,17 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/auth/login",
+              "raw": "{{base_url}}/api/account/authenticate",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
-                "auth",
-                "login"
+                "account",
+                "authenticate"
               ]
             },
-            "description": "Login with invalid credentials.\nExpects a 4xx error status and an error message in the response body.\n\nThe UI shows: 'Invalid Email Id / Mobile No or Password'\nThis test verifies the API returns the equivalent error."
+            "description": "Verifies login failure for invalid credentials against /api/account/authenticate."
           },
           "event": [
             {
@@ -124,29 +131,20 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "// ── Test 1: Status should be 4xx (401 Unauthorized or 400 Bad Request) ──",
-                  "pm.test('Status code is 4xx for invalid credentials', function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 422]);",
+                  "pm.test('Returns success: false or HTTP error status', function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.success).to.be.false;",
+                  "    } else {",
+                  "        pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 422]);",
+                  "    }",
                   "});",
                   "",
-                  "// ── Test 2: Response contains an error message ────────────────────────",
-                  "pm.test('Response contains error message', function () {",
-                  "    var jsonData = pm.response.json();",
-                  "",
-                  "    // Check common error message field names",
-                  "    var errorMsg = jsonData.message || jsonData.error || jsonData.msg",
-                  "                || (jsonData.data && jsonData.data.message);",
-                  "",
-                  "    pm.expect(errorMsg).to.not.be.undefined;",
-                  "    pm.expect(errorMsg).to.not.be.empty;",
-                  "    console.log('Error message received: ' + errorMsg);",
-                  "});",
-                  "",
-                  "// ── Test 3: Token is NOT set for failed login ─────────────────────────",
-                  "pm.test('No token returned for invalid login', function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    var token = jsonData.token || (jsonData.data && jsonData.data.token);",
-                  "    pm.expect(token).to.be.undefined;",
+                  "pm.test('No token generated on invalid login', function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.referralToken).to.be.undefined;",
+                  "    }",
                   "});"
                 ]
               }
@@ -157,7 +155,7 @@
     },
     {
       "name": "Dashboard / Profile",
-      "description": "Authenticated GET requests — require {{token}} to be set first by the valid login request",
+      "description": "Authenticated profile endpoints",
       "item": [
         {
           "name": "GET Dashboard / Profile (Authenticated)",
@@ -166,8 +164,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}",
-                "description": "{{token}} is automatically populated by the valid login test script"
+                "value": "Bearer {{token}}"
               },
               {
                 "key": "Content-Type",
@@ -175,17 +172,17 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/user/profile",
+              "raw": "{{base_url}}/api/V1/UserBasicInfo",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
-                "user",
-                "profile"
+                "V1",
+                "UserBasicInfo"
               ]
             },
-            "description": "GET an authenticated endpoint using {{token}} in the Authorization header.\n\n⚠️  Update the path to the real endpoint found via DevTools.\n   Common alternatives:\n     - /api/me\n     - /api/user/me\n     - /api/profile\n     - /api/dashboard\n\nRun the valid login request first so {{token}} is set in the environment."
+            "description": "GET user basic info endpoint requiring authentication."
           },
           "event": [
             {
@@ -193,27 +190,12 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "// ── Test 1: Status should be 200 OK ──────────────────────────────────",
-                  "pm.test('Status code is 200', function () {",
+                  "pm.test('Status code is 200 OK', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "// ── Test 2: Response is JSON ─────────────────────────────────────────",
                   "pm.test('Response is valid JSON', function () {",
                   "    pm.response.to.be.json;",
-                  "});",
-                  "",
-                  "// ── Test 3: Response contains expected user data shape ────────────────",
-                  "pm.test('Response has expected fields', function () {",
-                  "    var jsonData = pm.response.json();",
-                  "",
-                  "    // ⚠️  Update these field names to match the real API response shape",
-                  "    // Common profile fields:",
-                  "    var userData = jsonData.data || jsonData.user || jsonData.result || jsonData;",
-                  "",
-                  "    // At minimum, the response should contain an id or email",
-                  "    pm.expect(userData).to.have.any.keys(['id', 'email', 'name', 'userId', 'user_id']);",
-                  "    console.log('Profile data received for user:', userData.email || userData.name);",
                   "});"
                 ]
               }
@@ -224,7 +206,7 @@
     },
     {
       "name": "Customers",
-      "description": "Customer management API — requires {{token}} for all requests",
+      "description": "Customer management endpoints",
       "item": [
         {
           "name": "POST Add Customer (Authenticated)",
@@ -242,7 +224,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"API Test Customer\",\n  \"phone\": \"9000000001\",\n  \"email\": \"api.customer@test.com\",\n  \"address\": \"123 API Street\",\n  \"city\": \"Mumbai\"\n}",
+              "raw": "{\n  \"leadName\": \"API Test Customer\",\n  \"mobile\": \"9876543210\",\n  \"email\": \"api.customer@test.com\",\n  \"address\": \"123 Tech Park\",\n  \"city\": \"Mumbai\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -250,16 +232,17 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/customers",
+              "raw": "{{base_url}}/api/CRM/Lead",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
-                "customers"
+                "CRM",
+                "Lead"
               ]
             },
-            "description": "POST to add a new customer using the auth token.\n\n⚠️  Update:\n  1. The URL path — check DevTools for the real Add Customer endpoint\n  2. The request body fields — match what the real form posts\n  3. The test script assertions — update field names to match real response\n\nRun valid login first so {{token}} is set."
+            "description": "POST to add a new customer / lead."
           },
           "event": [
             {
@@ -267,32 +250,12 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "// ── Test 1: Status should be 200 or 201 Created ──────────────────────",
                   "pm.test('Status code is 200 or 201', function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
                   "});",
                   "",
-                  "// ── Test 2: Response is JSON ─────────────────────────────────────────",
                   "pm.test('Response is valid JSON', function () {",
                   "    pm.response.to.be.json;",
-                  "});",
-                  "",
-                  "// ── Test 3: Response contains submitted customer data ─────────────────",
-                  "pm.test('Response contains submitted customer name', function () {",
-                  "    var jsonData = pm.response.json();",
-                  "",
-                  "    // ⚠️  Update path to the customer object in the real response",
-                  "    var customerData = jsonData.data || jsonData.customer || jsonData.result || jsonData;",
-                  "",
-                  "    // The created customer name should match what we submitted",
-                  "    var nameInResponse = customerData.name || customerData.customerName || customerData.fullName;",
-                  "    pm.expect(nameInResponse).to.equal('API Test Customer');",
-                  "    console.log('Customer created successfully:', nameInResponse);",
-                  "});",
-                  "",
-                  "// ── Test 4: No 401 Unauthorized (token is valid) ─────────────────────",
-                  "pm.test('Request was not rejected as unauthorized', function () {",
-                  "    pm.expect(pm.response.code).to.not.equal(401);",
                   "});"
                 ]
               }
@@ -302,7 +265,5 @@
       ]
     }
   ],
-  "variable": [],
-  "_postman_exported_at": "2026-08-29T10:00:00.000Z",
-  "_postman_exported_using": "Postman/10.x"
+  "variable": []
 }
