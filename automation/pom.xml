@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ================================================================
+         Project coordinates — identifies this artifact in Maven Central
+         ================================================================ -->
+    <groupId>com.fieldforce</groupId>
+    <artifactId>fieldforce-automation</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>FieldForce Connect Automation</name>
+    <description>
+        Selenium + TestNG automation suite for https://test.fieldforceconnect.com/
+        Covers: Login (data-driven), Punch-In toast verification, Add Customer (data-driven).
+    </description>
+
+    <!-- ================================================================
+         Properties — centralise version numbers so upgrades touch one place
+         ================================================================ -->
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <selenium.version>4.25.0</selenium.version>
+        <webdrivermanager.version>5.9.2</webdrivermanager.version>
+        <testng.version>7.10.2</testng.version>
+        <opencsv.version>5.9</opencsv.version>
+        <surefire.version>3.2.5</surefire.version>
+        <compiler.plugin.version>3.12.1</compiler.plugin.version>
+    </properties>
+
+    <dependencies>
+
+        <!-- ==============================================================
+             Selenium WebDriver — browser automation library
+             selenium-java pulls in all browser-specific bindings
+             ============================================================== -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+
+        <!-- ==============================================================
+             WebDriverManager — automatically downloads the correct version
+             of ChromeDriver (or other drivers) at runtime.
+             No manual driver download ever needed.
+             ============================================================== -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${webdrivermanager.version}</version>
+        </dependency>
+
+        <!-- ==============================================================
+             TestNG — test framework providing @Test, @DataProvider,
+             @BeforeMethod, @AfterMethod, parameterised tests, and
+             the TestNG HTML report we need for the assignment.
+             ============================================================== -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ==============================================================
+             OpenCSV — parses CSV test-data files for @DataProvider.
+             Used by utils.CSVReader to feed login-data.csv and
+             customer-data.csv into the test methods.
+             ============================================================== -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>${opencsv.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- ============================================================
+                 Maven Compiler Plugin — enforces Java 17 source/target
+                 ============================================================ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler.plugin.version}</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+
+            <!-- ============================================================
+                 Maven Surefire Plugin — runs TestNG tests when you execute
+                 `mvn test`.  Points at testng.xml so the suite order,
+                 groups, and parallel config are all controlled there.
+                 HTML reports land in target/surefire-reports/
+                 ============================================================ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <configuration>
+                    <!-- testng.xml drives which tests run and in what order -->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <!-- HTML report destination -->
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
