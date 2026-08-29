@@ -1,6 +1,6 @@
 email,password,expectedResult
-mitesh8767@gmail.com,YOUR_PASSWORD_HERE,success
-mitesh8767@gmail.com,YOUR_PASSWORD_HERE,success
-9876543210,YOUR_PASSWORD_HERE,success
+mitesh8767@gmail.com,#Mit8767,success
+mitesh8767@gmail.com,#Mit8767,success
+9876543210,#Mit8767,success
 wronguser@test.com,WrongPass123,failure
 mitesh8767@gmail.com,IncorrectPassword99,failure
