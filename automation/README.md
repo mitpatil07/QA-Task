@@ -1,11 +1,9 @@
-# FieldForce Connect Automation — README
+# FieldForceConnect Automation Project
 
 ## Overview
-Selenium + TestNG automation suite for [https://test.fieldforceconnect.com/](https://test.fieldforceconnect.com/)
+Automated Test Suite for [https://test.fieldforceconnect.com/](https://test.fieldforceconnect.com/) built using **Java 17**, **Selenium WebDriver**, **TestNG**, and **Maven**.
 
-**Test framework:** TestNG · **Language:** Java 17 · **Build:** Maven  
-**Browser:** Chrome (auto-managed via WebDriverManager — no manual driver download)  
-**Pattern:** Page Object Model (POM)
+The project strictly follows the **Page Object Model (POM)** architectural design pattern to separate element locators and page interactions from test logic.
 
 ---
 
@@ -13,137 +11,97 @@ Selenium + TestNG automation suite for [https://test.fieldforceconnect.com/](htt
 
 ```
 automation/
-├── pom.xml                              ← Maven build config + all dependencies
-├── testng.xml                           ← Test suite definition (controls run order)
-├── README.md                            ← This file
+├── pom.xml                              # Maven build config & dependencies
+├── testng.xml                           # TestNG suite runner
+├── README.md                            # Automation documentation
 └── src/
     └── test/
         ├── java/
-        │   ├── pages/                   ← Page Object classes (POM layer)
-        │   │   ├── BasePage.java        ← WebDriver setup/teardown, screenshot util
-        │   │   ├── LoginPage.java       ← Login form locators + actions
-        │   │   ├── AttendancePage.java  ← Attendance / Punch-In locators + actions
-        │   │   └── CustomerPage.java    ← Add Customer form locators + actions
-        │   ├── tests/                   ← TestNG test classes
-        │   │   ├── LoginTest.java       ← Data-driven login (5 credential sets)
-        │   │   ├── PunchInTest.java     ← Toast verification + screenshot
-        │   │   └── AddCustomerTest.java ← Data-driven Add Customer (3 records)
-        │   └── utils/                   ← Reusable utilities
-        │       ├── CSVDataReader.java   ← Reads CSV → Object[][] for @DataProvider
-        │       └── Config.java          ← Reads config.properties
+        │   ├── pages/                   # Page Object classes (POM)
+        │   │   ├── BasePage.java        # Driver initialization, teardown & screenshot utility
+        │   │   ├── LoginPage.java       # Login locators & page actions
+        │   │   ├── AttendancePage.java  # Punch-In locators & toast assertions
+        │   │   └── CustomerPage.java    # Add Customer form locators & actions
+        │   ├── tests/                   # TestNG test suites
+        │   │   ├── LoginTest.java       # Parameterized data-driven login test
+        │   │   ├── PunchInTest.java     # Punch-In toast verification & screenshot
+        │   │   └── AddCustomerTest.java # Parameterized data-driven Add Customer test
+        │   └── utils/                   # Shared utilities
+        │       ├── CSVDataReader.java   # CSV parser for @DataProvider
+        │       └── Config.java          # Configuration file loader
         └── resources/
-            ├── config.properties        ← ⚠️ UPDATE password here before running
-            ├── testdata/
-            │   ├── login-data.csv       ← 3 valid + 2 invalid credential sets
-            │   └── customer-data.csv    ← 3 customer records for Add Customer test
-            └── screenshots/             ← Punch-In toast screenshots saved here
+            ├── config.properties        # Config settings
+            ├── testdata/                # CSV test datasets (login-data.csv, customer-data.csv)
+            └── screenshots/             # Output directory for screenshot evidence
 ```
 
 ---
 
-## Quick Start
+## Quick Start & Setup
 
-### Step 1 — Prerequisites
-| Requirement | Version | Check |
-|---|---|---|
-| Java JDK | 17+ | `java -version` |
-| Maven | 3.8+ | `mvn -version` |
-| Google Chrome | Latest | — |
+### Prerequisites
+- Java JDK 17+
+- Apache Maven 3.8+
+- Google Chrome Browser (`WebDriverManager` automatically provisions the matching ChromeDriver)
 
-> **No ChromeDriver download needed.** WebDriverManager handles it automatically.
-
-### Step 2 — Set Environment Variable (Password)
-Set your actual password as an environment variable before running the tests:
-```bash
-# Windows (PowerShell)
-$env:FFC_PASSWORD="YOUR_ACTUAL_PASSWORD_HERE"
-
-# Linux / Mac
-export FFC_PASSWORD="YOUR_ACTUAL_PASSWORD_HERE"
+### Setup Credentials
+Before running tests, configure your target credentials in `src/test/resources/config.properties`:
+```properties
+valid.email=your_registered_email@domain.com
+valid.password=your_password
 ```
-The framework is configured to inject this password into the configuration and CSV test data at runtime, so you don't commit it in plaintext.
+Alternatively, set the environment variable:
+```bash
+export FFC_PASSWORD="your_password"
+```
 
-### Step 3 — Run All Tests
+### Run All Tests
 ```bash
 cd automation
 mvn test
 ```
 
-### Step 4 — View Report
-After the run, open:
-```
-target/surefire-reports/index.html
-```
-in any browser for the TestNG HTML report.
-
----
-
-## Running Individual Tests
-
+### Run Individual Test Suites
 ```bash
-# Login test only
+# Execute Login Tests
 mvn test -Dtest=LoginTest
 
-# Punch-In test only
+# Execute Punch-In Test
 mvn test -Dtest=PunchInTest
 
-# Add Customer test only
+# Execute Add Customer Tests
 mvn test -Dtest=AddCustomerTest
 ```
 
----
-
-## Test Descriptions
-
-### 1. LoginTest (data-driven)
-Reads `login-data.csv` and runs one test invocation per row (5 total):
-- **Rows 1-3** (valid): Assert browser reaches `/dashboard`
-- **Rows 4-5** (invalid): Assert error message `"Invalid Email Id / Mobile No or Password"` is displayed
-
-Uses `@DataProvider` + `WebDriverWait.until(urlContains(...))` — zero `Thread.sleep()` calls.
-
-### 2. PunchInTest
-1. Logs in via `@BeforeMethod`
-2. Navigates to `/attendance`
-3. Clicks "Add New" (the punch-in trigger)
-4. Waits for toast with `ExpectedConditions.visibilityOfElementLocated`
-5. Asserts toast text is non-empty
-6. Saves PNG screenshot to `src/test/resources/screenshots/`
-
-### 3. AddCustomerTest (data-driven)
-Reads `customer-data.csv` and runs once per row (3 total):
-1. Logs in via `@BeforeMethod`
-2. Navigates to My Customers
-3. Clicks Add Customer
-4. Fills form (name, phone, email, address, city)
-5. Submits and asserts either success toast OR customer name visible in list
+### Viewing Execution Report
+After execution, open the TestNG report in any browser:
+`automation/target/surefire-reports/index.html`
 
 ---
 
-## Locator Update Guide
+## Test Implementation Summary
 
-Since the site is a **React SPA**, all locators use XPath with placeholder text
-(not brittle CSS class names). If a locator fails:
+### 1. LoginTest (`tests.LoginTest`)
+- **Pattern:** Parameterized Data-Driven Test.
+- **Input Data:** `src/test/resources/testdata/login-data.csv` (5 dataset rows).
+- **Assertions:** Validates dashboard redirect on valid login and error feedback on invalid attempts.
 
-1. Open `https://test.fieldforceconnect.com/auth/login` in Chrome
-2. Right-click the failing element → **Inspect**
-3. Note the `placeholder`, `name`, or `id` attribute
-4. Open the corresponding page class and update the `By.xpath(...)` value
+### 2. PunchInTest (`tests.PunchInTest`)
+- **Pattern:** End-to-End Functional Test.
+- **Execution:** Performs authentication, navigates to Attendance, clicks Punch-In trigger, waits explicitly for toast message (`ExpectedConditions.visibilityOfElementLocated`), and captures screenshot evidence.
 
-Common files to update:
-- **Login fails**: `LoginPage.java` → `EMAIL_FIELD` or `LOGIN_BUTTON`
-- **Punch-In fails**: `AttendancePage.java` → `ADD_NEW_BUTTON` or `PUNCH_IN_ICON_IN_ROW`
-- **Add Customer fails**: `CustomerPage.java` → `FIELD_*` locators
+### 3. AddCustomerTest (`tests.AddCustomerTest`)
+- **Pattern:** Parameterized Data-Driven Test.
+- **Input Data:** `src/test/resources/testdata/customer-data.csv` (3 customer records).
+- **Assertions:** Fills customer details, submits form, and validates creation feedback.
 
 ---
 
-## Design Decisions (Interview Notes)
+## Design Choices
 
-| Decision | Reason |
+| Architectural Choice | Rationale |
 |---|---|
-| **Page Object Model** | Separates locators from test logic. One locator change = one file edit |
-| **WebDriverManager** | Eliminates manual ChromeDriver version management |
-| **WebDriverWait only** | `Thread.sleep()` wastes time on fast machines; explicit wait adapts to actual app speed |
-| **Config.properties** | Credentials never hard-coded in Java — change env without touching source |
-| **CSVDataReader** | OpenCSV handles quoted commas (e.g., "123 Main St, Apt 4") correctly |
-| **`@BeforeMethod` inheritance** | TestNG runs parent's `@BeforeMethod` (driver setup) before child's (login), giving each test a clean browser + logged-in state |
+| **Page Object Model (POM)** | Decouples UI locators from test logic for maintainability. |
+| **WebDriverManager** | Eliminates manual ChromeDriver executable downloads and version mismatch issues. |
+| **Explicit Synchronization** | Replaces hardcoded sleeps with `WebDriverWait` for dynamic page loading. |
+| **CSV Data Providers** | Enables scalable data-driven testing without hardcoding test datasets in Java. |
