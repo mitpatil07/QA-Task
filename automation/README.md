@@ -37,56 +37,23 @@ automation/
 
 ---
 
-## Quick Start & Setup
-
-### Prerequisites
-- Java JDK 17+
-- Apache Maven 3.8+
-- Google Chrome Browser (`WebDriverManager` automatically provisions the matching ChromeDriver)
-
-### Setup Credentials
-Configure your target credentials in `src/test/resources/config.properties`:
-```properties
-valid.email=your_registered_email@domain.com
-valid.password=your_password
-```
-
----
-
 ## How to Run Tests
 
-### Option A: Command Line (Maven CLI)
-```bash
-cd automation
+### Method 1: Java IDE (Recommended)
+1. Open the `/automation` folder in **IntelliJ IDEA**, **Eclipse**, or **VS Code**.
+2. Ensure your IDE imports `pom.xml` dependencies.
+3. Open `testng.xml` -> **Right-click `testng.xml` -> Run 'testng.xml'** (or **Run As -> TestNG Suite**).
+
+### Method 2: Maven Command Line
+```powershell
+cd "e:\QA task\automation"
 mvn test
 ```
 
 > **Troubleshooting: `mvn : The term 'mvn' is not recognized`**  
-> This error occurs when Apache Maven is not added to your Windows system `PATH` environment variable.  
-> **Fixes:**  
-> 1. Add Apache Maven's `bin` folder path (e.g. `C:\apache-maven\bin`) to system Environment Variables -> System Variables -> `Path`. Restart terminal.  
-> 2. Or execute the test suite directly from your IDE (Option B below).
-
-### Option B: Java IDE (IntelliJ IDEA / Eclipse / VS Code)
-1. Open the `/automation` folder in your IDE.
-2. Ensure the IDE imports `pom.xml` dependencies.
-3. Open `testng.xml` -> Right-click -> Select **Run 'testng.xml'** (or **Run As -> TestNG Suite**).
-
-### Run Individual Test Suites via Maven
-```bash
-# Execute Login Tests
-mvn test -Dtest=LoginTest
-
-# Execute Punch-In Test
-mvn test -Dtest=PunchInTest
-
-# Execute Add Customer Tests
-mvn test -Dtest=AddCustomerTest
-```
-
-### Viewing Execution Report
-After execution, open the TestNG report in any browser:
-`automation/target/surefire-reports/index.html`
+> If your terminal displays this message, Maven is not added to your Windows environment `PATH`.  
+> - Use **Method 1 (IDE execution)**, which uses your IDE's built-in Maven bundler.  
+> - Or download Apache Maven from [maven.apache.org](https://maven.apache.org/download.cgi) and add `C:\apache-maven\bin` to Windows System Environment Variables -> `Path`.
 
 ---
 
@@ -105,14 +72,3 @@ After execution, open the TestNG report in any browser:
 - **Pattern:** Parameterized Data-Driven Test.
 - **Input Data:** `src/test/resources/testdata/customer-data.csv` (3 customer records).
 - **Assertions:** Fills customer details, submits form, and validates creation feedback.
-
----
-
-## Design Choices
-
-| Architectural Choice | Rationale |
-|---|---|
-| **Page Object Model (POM)** | Decouples UI locators from test logic for maintainability. |
-| **WebDriverManager** | Eliminates manual ChromeDriver executable downloads and version mismatch issues. |
-| **Explicit Synchronization** | Replaces hardcoded sleeps with `WebDriverWait` for dynamic page loading. |
-| **CSV Data Providers** | Enables scalable data-driven testing without hardcoding test datasets in Java. |

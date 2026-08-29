@@ -55,34 +55,31 @@ QA task/
 - **Synchronization:** Zero `Thread.sleep()` calls; uses `WebDriverWait` and `ExpectedConditions`.
 - **Driver Management:** Automatic Chrome binary management via `WebDriverManager`.
 
-### Prerequisites
-- Java JDK 17 or higher (`java -version`)
-- Apache Maven 3.8+ (`mvn -version`)
-- Google Chrome Browser
+---
 
-### How to Run Tests
+### How to Run Automation Tests
 
-#### Option A: Command Line (Maven CLI)
-1. Navigate to the automation directory:
-   ```bash
-   cd automation
+#### Method 1: Java IDE (Recommended — Works without global Maven PATH setup)
+1. Open the `/automation` folder in **IntelliJ IDEA**, **Eclipse**, or **VS Code**.
+2. Allow your IDE to load dependencies from `pom.xml`.
+3. Open `testng.xml` -> **Right-click `testng.xml` -> Run 'testng.xml'** (or **Run As -> TestNG Suite**).
+
+#### Method 2: Maven Command Line (Requires Maven installed on System PATH)
+1. Open terminal and navigate to the automation directory:
+   ```powershell
+   cd "e:\QA task\automation"
    ```
-2. Set your credentials in `src/test/resources/config.properties`.
+2. Configure credentials in `src/test/resources/config.properties`.
 3. Execute tests:
-   ```bash
+   ```powershell
    mvn test
    ```
-4. View the TestNG report at `automation/target/surefire-reports/index.html`.
+4. View generated report at `automation/target/surefire-reports/index.html`.
 
-> **Note on `mvn : The term 'mvn' is not recognized`:**  
-> If your terminal displays this message, Maven binary is not added to your system `PATH` variable. You can either:  
-> 1. Add Apache Maven `bin` directory to environment PATH (e.g. `C:\apache-maven\bin`), OR  
-> 2. Run the suite directly from your IDE as shown in Option B below.
-
-#### Option B: Java IDE (IntelliJ IDEA / Eclipse / VS Code)
-1. Open the `/automation` directory in your IDE as a Maven project.
-2. Allow Maven to import dependencies automatically from `pom.xml`.
-3. Right-click `testng.xml` -> click **Run 'testng.xml'** (or **Run As -> TestNG Suite**).
+> ⚠️ **If PowerShell says `mvn : The term 'mvn' is not recognized`:**  
+> This means Apache Maven is not added to your Windows system `PATH` variable.  
+> - **Quickest Solution:** Run via Method 1 (IDE `testng.xml` execution).  
+> - **To enable `mvn` in terminal:** Download Apache Maven from [maven.apache.org](https://maven.apache.org/download.cgi), extract to `C:\apache-maven`, and add `C:\apache-maven\bin` to Windows Environment Variables -> System Variables -> `Path`.
 
 ---
 
