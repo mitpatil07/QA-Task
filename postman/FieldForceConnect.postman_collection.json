@@ -31,8 +31,14 @@
             },
             "url": {
               "raw": "{{base_url}}/api/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["api", "auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
             },
             "description": "Login with valid credentials.\n\n⚠️  Update the path if the real API endpoint differs.\n   Common alternatives:\n     - /api/login\n     - /auth/login\n     - /api/v1/auth/login\n\nThe test script below:\n  1. Asserts HTTP status is 200\n  2. Extracts the auth token from the response\n  3. Stores it in environment variable 'token' for use by subsequent requests"
           },
@@ -101,8 +107,14 @@
             },
             "url": {
               "raw": "{{base_url}}/api/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["api", "auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
             },
             "description": "Login with invalid credentials.\nExpects a 4xx error status and an error message in the response body.\n\nThe UI shows: 'Invalid Email Id / Mobile No or Password'\nThis test verifies the API returns the equivalent error."
           },
@@ -164,8 +176,14 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/user/profile",
-              "host": ["{{base_url}}"],
-              "path": ["api", "user", "profile"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "profile"
+              ]
             },
             "description": "GET an authenticated endpoint using {{token}} in the Authorization header.\n\n⚠️  Update the path to the real endpoint found via DevTools.\n   Common alternatives:\n     - /api/me\n     - /api/user/me\n     - /api/profile\n     - /api/dashboard\n\nRun the valid login request first so {{token}} is set in the environment."
           },
@@ -233,8 +251,13 @@
             },
             "url": {
               "raw": "{{base_url}}/api/customers",
-              "host": ["{{base_url}}"],
-              "path": ["api", "customers"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "customers"
+              ]
             },
             "description": "POST to add a new customer using the auth token.\n\n⚠️  Update:\n  1. The URL path — check DevTools for the real Add Customer endpoint\n  2. The request body fields — match what the real form posts\n  3. The test script assertions — update field names to match real response\n\nRun valid login first so {{token}} is set."
           },
