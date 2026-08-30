@@ -10,7 +10,7 @@ This folder contains the Postman collection and environment for API testing of [
 | File | Description |
 |------|-------------|
 | `FieldForceConnect.postman_collection.json` | API collection with verified live endpoints and test scripts |
-| `FieldForceConnect.postman_environment.json` | Environment variables (`base_url`, `token`, `valid_email`, `valid_password`) |
+| `FieldForceConnect.postman_environment.json` | Environment variables (`base_url`, `token`, `valid_username`, `valid_password`) |
 | `README.md` | This file |
 
 ---
@@ -20,7 +20,7 @@ This folder contains the Postman collection and environment for API testing of [
 | Variable | Value | Set By |
 |---|---|---|
 | `base_url` | `https://test.fieldforceconnect.com` | Pre-configured |
-| `valid_email` | `YOUR_EMAIL_HERE` | Pre-configured |
+| `valid_username` | `YOUR_USERNAME_HERE` | Pre-configured |
 | `valid_password` | `YOUR_PASSWORD_HERE` | User configuration |
 | `token` | _(empty initially)_ | Set automatically by Login test script |
 
@@ -34,7 +34,7 @@ This folder contains the Postman collection and environment for API testing of [
 **Body:**
 ```json
 {
-  "username": "{{valid_email}}",
+  "username": "{{valid_username}}",
   "password": "{{valid_password}}"
 }
 ```
@@ -94,7 +94,7 @@ The collection includes a pre-request script that automatically checks if `{{tok
 ## How to Run
 
 ### Option A: Postman UI (Recommended)
-1. Import `FieldForceConnect.postman_environment.json` and set `valid_email` / `valid_password`.
+1. Import `FieldForceConnect.postman_environment.json` and set `valid_username` / `valid_password`.
 2. Import `FieldForceConnect.postman_collection.json`.
 3. Select `FieldForceConnect` environment.
 4. Run **POST Login — Valid Credentials** first to capture token, then run remaining requests.

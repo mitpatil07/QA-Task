@@ -125,7 +125,7 @@ SIGNUP_CASES = [
     ("TC_SU_007", "Sign Up", "Duplicate email registration",
      "Email already registered",
      "1. Enter already-registered email\n2. Fill other fields\n3. Submit",
-     "Email:mitesh8767@gmail.com",
+     "Email:YOUR_EMAIL_HERE",
      "Error: 'Email already in use' or similar", "", "", "High"),
 
     ("TC_SU_008", "Sign Up", "Name field — special characters",
@@ -163,7 +163,7 @@ FORGOT_PASSWORD_CASES = [
     ("TC_FP_001", "Forgot Password", "Submit valid registered email",
      "User account exists",
      "1. Click 'Forgot Password?' on login page\n2. Enter registered email\n3. Click Submit",
-     "Email:mitesh8767@gmail.com",
+     "Email:YOUR_EMAIL_HERE",
      "OTP sent confirmation shown (or email dispatched)", "", "", "High"),
 
     ("TC_FP_002", "Forgot Password", "Enter correct OTP and reset password",
@@ -293,7 +293,7 @@ LOGIN_CASES = [
     ("TC_L_001", "Login", "Valid login with email and password",
      "Registered account exists",
      "1. Go to /auth/login\n2. Enter valid email + password\n3. Click Login",
-     "Email:mitesh8767@gmail.com\nPass:YOUR_PASSWORD",
+     "Email:YOUR_EMAIL_HERE\nPass:YOUR_PASSWORD",
      "Redirected to dashboard (/dashboard)", "", "Pass", "High"),
 
     ("TC_L_002", "Login", "Valid login with mobile number and password",
@@ -311,7 +311,7 @@ LOGIN_CASES = [
     ("TC_L_004", "Login", "Wrong password for registered email",
      "Account exists",
      "1. Enter correct email\n2. Enter wrong password\n3. Click Login",
-     "Email:mitesh8767@gmail.com\nPass:WrongPass",
+     "Email:YOUR_EMAIL_HERE\nPass:WrongPass",
      "'Invalid Email Id / Mobile No or Password'", "", "Pass", "High"),
 
     ("TC_L_005", "Login", "Unregistered email",
@@ -329,7 +329,7 @@ LOGIN_CASES = [
     ("TC_L_007", "Login", "Empty password field",
      "Login page open",
      "1. Enter valid email\n2. Leave password empty\n3. Click Login",
-     "Email:mitesh8767@gmail.com\nPass:(empty)",
+     "Email:YOUR_EMAIL_HERE\nPass:(empty)",
      "Validation error shown below password field", "", "", "High"),
 
     ("TC_L_008", "Login", "Both fields empty",

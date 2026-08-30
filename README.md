@@ -103,7 +103,7 @@ The manual test suite covers end-to-end scenarios, boundary values, negative inp
 
 | Function | Endpoint | Method | Key Body / Auth Details |
 |---|---|---|---|
-| **Login API** | `/api/account/authenticate` | `POST` | `{"username": "{{valid_email}}", "password": "{{valid_password}}"}` |
+| **Login API** | `/api/account/authenticate` | `POST` | `{"username": "{{valid_username}}", "password": "{{valid_password}}"}` |
 | **User Profile API** | `/api/V1/UserBasicInfo` | `GET` | `Authorization: Bearer {{token}}` |
 | **Add Customer API** | `/api/CRM/Lead` | `POST` | `{"leadName": "...", "mobile": "...", "email": "..."}` |
 | **Check-In API** | `/api/CheckIn` | `POST` | `Authorization: Bearer {{token}}` |
@@ -116,7 +116,7 @@ The Postman collection includes a collection-level pre-request script:
 ### How to Run Postman Collection
 
 1. Open Postman and import `postman/FieldForceConnect.postman_environment.json`.
-2. Set your test credentials (`valid_email` and `valid_password`) in the environment.
+2. Set your test credentials (`valid_username` and `valid_password`) in the environment.
 3. Import `postman/FieldForceConnect.postman_collection.json`.
 4. Select the `FieldForceConnect` environment in the top-right dropdown.
 5. Execute **POST Login — Valid Credentials** first to populate `{{token}}`, then run remaining requests.
