@@ -59,6 +59,13 @@ public class LoginPage {
      */
     public void navigateToLogin() {
         driver.get(LOGIN_URL);
+        try {
+            ((org.openqa.selenium.JavascriptExecutor) driver).executeScript(
+                "window.localStorage.clear(); window.sessionStorage.clear();"
+            );
+            driver.manage().deleteAllCookies();
+            driver.get(LOGIN_URL);
+        } catch (Exception ignored) {}
     }
 
     /**

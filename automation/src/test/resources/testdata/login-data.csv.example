@@ -1,0 +1,6 @@
+email,password,expectedResult
+YOUR_EMAIL_HERE,YOUR_PASSWORD_HERE,success
+YOUR_EMAIL_HERE,YOUR_PASSWORD_HERE,success
+9876543210,YOUR_PASSWORD_HERE,success
+wronguser@test.com,WrongPass123,failure
+YOUR_EMAIL_HERE,IncorrectPassword99,failure

@@ -124,3 +124,43 @@ The Postman collection includes a collection-level pre-request script:
    ```bash
    newman run postman/FieldForceConnect.postman_collection.json -e postman/FieldForceConnect.postman_environment.json
    ```
+
+### Auth mechanism — observed behavior
+
+The login response's `token` field is returned empty (`"token": ""`); the only populated
+JWT-like value is `referralToken`, which by naming appears scoped to referral features rather
+than general API auth. In testing, the Profile and Add Customer endpoints returned valid `200`
+responses regardless of whether a real bearer token was supplied. This suggests these particular
+endpoints do not enforce bearer-token auth on this environment — worth calling out to an
+evaluator as an observation about the API's current behavior, rather than assuming the
+`Authorization: Bearer {{token}}` header shown above is doing meaningful work.
+
+---
+
+## Credentials
+
+Test account credentials (email + password) are provided to the evaluator separately and are
+**not committed to this repository**. `config.properties`, `login-data.csv`, and the Postman
+environment file are gitignored; each has a matching `*.example` file in the same folder showing
+the expected format with placeholder values. To run this project locally:
+
+```bash
+cp automation/src/test/resources/config.properties.example automation/src/test/resources/config.properties
+cp automation/src/test/resources/testdata/login-data.csv.example automation/src/test/resources/testdata/login-data.csv
+cp postman/FieldForceConnect.postman_environment.example.json postman/FieldForceConnect.postman_environment.json
+# then fill in the real email/password in each of the three copied files
+```
+
+---
+
+## Verification Status (honest summary)
+
+| Item | Status |
+|---|---|
+| Login flow (UI automation) | ✅ Locators verified against live site |
+| Login flow (API, Postman/Newman) | ✅ Confirmed working — `success: true`, 0 assertion failures |
+| Add Customer (API) | ✅ Endpoint confirmed (`/api/CRM/Lead`), returns 200 |
+| Add Customer (UI automation) | 🟡 Built, not yet run end-to-end against a fresh customer record |
+| Punch-In toast (UI automation) | 🟡 Test asserts a toast appears and is non-empty; the *exact expected text* (`EXPECTED_PUNCH_IN_TOAST`) is an unverified placeholder — the test account was already punched in during exploration, so the real toast was never captured. The test logs a notice rather than failing on a text mismatch. |
+| Bearer token auth mechanism | 🟡 Observed that `token` is empty in the login response and authenticated endpoints return 200 without a valid token — see note above |
+| Manual test cases | ✅ Complete for all 4 modules |

@@ -44,6 +44,18 @@ public class PunchInTest extends BasePage {
             "Punch-In notification toast was empty or not displayed."
         );
 
+        // Soft comparison only — does NOT fail the test. AttendancePage.EXPECTED_PUNCH_IN_TOAST
+        // is a best-guess placeholder that was never confirmed against the live DOM (see the
+        // verification-status note on that constant). Logging the mismatch here instead of
+        // asserting on it keeps this test meaningful even before that value is confirmed.
+        if (!actualToastText.equalsIgnoreCase(AttendancePage.EXPECTED_PUNCH_IN_TOAST)) {
+            System.out.println(
+                "[NOTICE] Actual toast text ('" + actualToastText + "') differs from the " +
+                "placeholder EXPECTED_PUNCH_IN_TOAST ('" + AttendancePage.EXPECTED_PUNCH_IN_TOAST +
+                "'). Update the constant with this real value."
+            );
+        }
+
         String screenshotPath = takeScreenshot("punch_in_toast");
         Assert.assertNotNull(
             screenshotPath,

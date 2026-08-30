@@ -27,8 +27,12 @@ Thumbs.db
 __pycache__/
 *.pyc
 
-# Sensitive — never commit real passwords
-# (config.properties has YOUR_PASSWORD_HERE placeholder — keep it that way)
+# Sensitive — never commit real credentials.
+# Only the .example templates (with placeholders) are tracked in git.
+# Real values live only in these local, gitignored files:
+automation/src/test/resources/config.properties
+automation/src/test/resources/testdata/login-data.csv
+postman/FieldForceConnect.postman_environment.json
 
 # Local scripts
 run.cmd

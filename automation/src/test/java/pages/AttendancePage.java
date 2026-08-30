@@ -18,7 +18,16 @@ public class AttendancePage {
     // Attendance URL constant
     public static final String ATTENDANCE_URL = "https://test.fieldforceconnect.com/attendance";
 
-    // Expected toast message pattern for successful punch-in
+    // Expected toast message pattern for successful punch-in.
+    // ⚠️ VERIFICATION STATUS: This value has NOT been confirmed against the live
+    // site's actual DOM/toast text. The test account was already in a
+    // "punched in" state during exploration, so the real punch-in toast was
+    // never captured. Before relying on PunchInTest's assertion, punch out on
+    // the live site, punch back in, and update this constant with the exact
+    // text shown. Locators below (TOAST_MESSAGE, PUNCH_IN_ICON_IN_ROW) are
+    // similarly unverified — they cover several common UI patterns
+    // (react-hot-toast, Toastify, generic alert roles) as a best-effort
+    // fallback, not a confirmed match.
     public static final String EXPECTED_PUNCH_IN_TOAST = "Punched In Successfully";
 
     // Locators
